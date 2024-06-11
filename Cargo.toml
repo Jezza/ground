@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+	"crates/ground-env",
+	"crates/ground-env/derive",
+]
+
+[workspace.lints.rust]
+deprecated = "allow"
+
+[workspace.lints.clippy]
+derive_partial_eq_without_eq = "allow"
+uninlined_format_args = "allow"
+cast_possible_truncation = "warn"
+unwrap_used = "deny"
