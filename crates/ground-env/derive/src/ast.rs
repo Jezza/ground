@@ -7,14 +7,13 @@ pub(crate) struct EnvField {
     pub ident: Option<Ident>,
     pub ty: syn::Type,
 
-    /// use std::Default::default() as default value
-    pub default: darling::util::Flag,
-    /// parse string literal into value
-    pub default_value: Option<syn::LitStr>,
-
     /// use this environment variable name instead of field ident
     pub rename: Option<syn::LitStr>,
 
+    /// parse string literal into value
+    pub default: Option<Override<syn::LitStr>>,
+
+    /// parse string literal into value, or Default::default() when no explicit value provided
     pub flatten: Option<Override<syn::LitStr>>,
 
     pub delimiter: Option<syn::LitStr>,

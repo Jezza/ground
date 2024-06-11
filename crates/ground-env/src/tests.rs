@@ -24,13 +24,13 @@ fn test_simple() {
         ("OPTIONAL_TEXT_PRESENT", "World"),
         ("NUMBER", "-42"),
     ])
-    .unwrap();
+        .unwrap();
     assert_eq!(test.text, "Hello");
     assert!(test.optional_text_missing.is_none());
     assert_eq!(test.optional_text_present.as_deref(), Some("World"));
     assert_eq!(test.number, -42);
 
-    assert!(test_env::<Test>(&[("TEXT", "Hello"), ("OPTIONAL_TEXT_PRESENT", "World"),]).is_err());
+    assert!(test_env::<Test>(&[("TEXT", "Hello"), ("OPTIONAL_TEXT_PRESENT", "World"), ]).is_err());
 }
 
 #[test]
@@ -51,18 +51,21 @@ fn test_defaults() {
     #[derive(FromEnv)]
     #[env(root = "crate")]
     struct Test {
-        #[env(default_value = "Hello, World!")]
+        #[env(default = "Hello, World!")]
         text: String,
         #[env(default)]
         number: i64,
         #[env(default)]
         optional_text: Option<String>,
+        #[env(default = "asd")]
+        optional_text_but_defaulted: Option<String>,
     }
 
     let test = test_env::<Test>(&[]).unwrap();
     assert_eq!(test.text, "Hello, World!");
     assert_eq!(test.number, 0);
     assert!(test.optional_text.is_none());
+    assert!(test.optional_text_but_defaulted.is_some());
 }
 
 #[test]

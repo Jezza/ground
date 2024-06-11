@@ -122,6 +122,19 @@ pub fn transpose_err<T, E, U>(result: Result<Result<T, U>, E>) -> Result<Result<
     }
 }
 
+
+// Result<T, Result<T, E>> -> Result<T, E>
+#[doc(hidden)]
+pub fn flatten_err<T, E>(result: Result<T, Result<T, E>>) -> Result<T, E> {
+    match result {
+        Ok(value) => Ok(value),
+        Err(result) => match result {
+            Ok(value) => Ok(value),
+            Err(err) => Err(err),
+        },
+    }
+}
+
 pub trait FromEnv: Sized {
     fn from_env() -> Result<Self> {
         Self::from_ctx(&Context::env())
@@ -135,9 +148,9 @@ pub trait Parse: Sized {
 }
 
 impl<T, E> Parse for T
-where
-    T: std::str::FromStr<Err = E>,
-    E: std::error::Error,
+    where
+        T: std::str::FromStr<Err=E>,
+        E: std::error::Error,
 {
     fn parse(value: &str) -> Result<Self> {
         std::str::FromStr::from_str(value).map_err(|err: E| Error::Parse {

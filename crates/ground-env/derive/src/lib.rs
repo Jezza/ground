@@ -71,14 +71,29 @@ fn expand_field(
     let span = field_ident.span();
 
     if let Some(flatten) = field.flatten {
+        if field.rename.is_some() {
+            return quote::quote_spanned! { span=>
+                compile_error!("#[env(rename = "...")] cannot be used with `flatten`")
+            };
+        }
+        if field.delimiter.is_some() {
+            return quote::quote_spanned! { span=>
+                compile_error!("#[env(delimiter = "...")] cannot be used with `flatten`")
+            };
+        }
+        if field.default.is_some() {
+            return quote::quote_spanned! { span=>
+                compile_error!("#[env(default = "...")] cannot be used with `flatten`")
+            };
+        }
         return match flatten {
             Override::Inherit => {
-                quote::quote_spanned! { span =>
+                quote::quote_spanned! { span=>
                     ctx.with_prefix::<_>(None)?
                 }
             }
             Override::Explicit(prefix) => {
-                quote::quote_spanned! { span =>
+                quote::quote_spanned! { span=>
                     ctx.with_prefix::<_>(Some(#prefix))?
                 }
             }
@@ -99,25 +114,25 @@ fn expand_field(
     match utils::subty_if_name(&field.ty, "Option") {
         Some(sub_ty) => {
             if is_generic_ty(sub_ty, "Option") {
-                quote::quote_spanned! { span =>
+                quote::quote_spanned! { span=>
                     compile_error!("Option<Option<_>> is not supported")
                 }
             } else if is_generic_ty(sub_ty, "Vec") {
-                quote::quote_spanned! { span =>
+                quote::quote_spanned! { span=>
                     compile_error!("Option<Vec<_>> is not supported")
                 }
             } else {
-                expand_optional_field(root, span, value, field.default, field.default_value)
+                expand_optional_field(root, span, value, field.default)
             }
         }
         None => match utils::subty_if_name(&field.ty, "Vec") {
             Some(sub_ty) => {
                 if is_generic_ty(sub_ty, "Option") {
-                    quote::quote_spanned! { span =>
+                    quote::quote_spanned! { span=>
                         compile_error!("Vec<Option<_>> is not supported")
                     }
                 } else if is_generic_ty(sub_ty, "Vec") {
-                    quote::quote_spanned! { span =>
+                    quote::quote_spanned! { span=>
                         compile_error!("Vec<Vec<_>> is not supported")
                     }
                 } else {
@@ -126,12 +141,11 @@ fn expand_field(
                         span,
                         value,
                         field.default,
-                        field.default_value,
                         field.delimiter,
                     )
                 }
             }
-            None => expand_mandatory_field(root, span, value, field.default, field.default_value),
+            None => expand_mandatory_field(root, span, value, field.default),
         },
     }
 }
@@ -140,21 +154,19 @@ fn expand_optional_field(
     root: &proc_macro2::TokenStream,
     span: proc_macro2::Span,
     value: proc_macro2::TokenStream,
-    default: darling::util::Flag,
-    default_value: Option<syn::LitStr>,
+    default2: Option<Override<syn::LitStr>>,
 ) -> proc_macro2::TokenStream {
-    if default.is_present() {
-        quote::quote_spanned! { span =>
+    match default2 {
+        Some(Override::Explicit(default)) => quote::quote_spanned! { span=>
+            Some(#root::flatten_err(#root::transpose_err(#value?.map(#root::Parse::parse))?
+                .map_err(|_| #root::Parse::parse(#default)))?)
+        },
+        Some(Override::Inherit) => quote::quote_spanned! { span=>
             #root::transpose_err(#value?.map(#root::Parse::parse))?.ok()
-        }
-    } else if default_value.is_some() {
-        quote::quote_spanned! { span =>
-            compile_error!("default_value is not supported on Option<T>")
-        }
-    } else {
-        quote::quote_spanned! { span =>
+        },
+        None => quote::quote_spanned! { span=>
             #value?.ok().map(#root::Parse::parse).transpose()?
-        }
+        },
     }
 }
 
@@ -162,24 +174,18 @@ fn expand_mandatory_field(
     root: &proc_macro2::TokenStream,
     span: proc_macro2::Span,
     value: proc_macro2::TokenStream,
-    default: darling::util::Flag,
-    default_value: Option<syn::LitStr>,
+    default2: Option<Override<syn::LitStr>>,
 ) -> proc_macro2::TokenStream {
-    if default.is_present() {
-        quote::quote_spanned! { span =>
+    match default2 {
+        Some(Override::Explicit(default)) => quote::quote_spanned! { span=>
+            #root::Parse::parse(#value?.unwrap_or(#default))?
+        },
+        Some(Override::Inherit) => quote::quote_spanned! { span=>
             #root::transpose_err(#value?.map(#root::Parse::parse))?.unwrap_or_default()
-        }
-    } else if let Some(default_value) = default_value {
-        quote::quote_spanned! { span =>
-            {
-                let value = #value?.unwrap_or(#default_value);
-                #root::Parse::parse(value)?
-            }
-        }
-    } else {
-        quote::quote_spanned! { span =>
+        },
+        None => quote::quote_spanned! { span=>
             #value?.map(Parse::parse).map_err(Error::Missing)??
-        }
+        },
     }
 }
 
@@ -187,8 +193,7 @@ fn expand_vec_field(
     root: &proc_macro2::TokenStream,
     span: proc_macro2::Span,
     value: proc_macro2::TokenStream,
-    default: darling::util::Flag,
-    default_value: Option<syn::LitStr>,
+    default2: Option<Override<syn::LitStr>>,
     delimiter: Option<syn::LitStr>,
 ) -> proc_macro2::TokenStream {
     let delimiter = delimiter
@@ -206,17 +211,15 @@ fn expand_vec_field(
         transpose_err(result)?
     }};
 
-    if default.is_present() {
-        quote::quote_spanned! { span =>
+    match default2 {
+        Some(Override::Explicit(default)) => quote::quote_spanned! { span=>
+            compile_error!("default is not supported on Vec<T>")
+        },
+        Some(Override::Inherit) => quote::quote_spanned! { span=>
             #value.unwrap_or_default()
-        }
-    } else if default_value.is_some() {
-        quote::quote_spanned! { span =>
-            compile_error!("default_value is not supported on Vec<T>")
-        }
-    } else {
-        quote::quote_spanned! { span =>
+        },
+        None => quote::quote_spanned! { span=>
             #value.map_err(#root::Error::Missing)?
-        }
+        },
     }
 }
