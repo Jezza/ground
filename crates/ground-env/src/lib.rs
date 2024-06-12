@@ -62,39 +62,6 @@ impl<'prefix> Context<'prefix> {
     }
 }
 
-// impl Extend<(String, String)> for Context<'_> {
-//     fn extend<T: IntoIterator<Item=(String, String)>>(&mut self, iter: T) {
-//     }
-//     fn extend_one(&mut self, item: (String, String)) {
-//         todo!()
-//     }
-//     fn extend_reserve(&mut self, additional: usize) {
-//         todo!()
-//     }
-// }
-//
-// impl Extend<(&String, &String)> for Context<'_> {
-//     fn extend<T: IntoIterator<Item=(&String, &String)>>(&mut self, iter: T) {
-//     }
-//     fn extend_one(&mut self, item: (&String, &String)) {
-//         todo!()
-//     }
-//     fn extend_reserve(&mut self, additional: usize) {
-//         todo!()
-//     }
-// }
-//
-// impl Extend<(&str, &str)> for Context<'_> {
-//     fn extend<T: IntoIterator<Item=(&str, &str)>>(&mut self, iter: T) {
-//     }
-//     fn extend_one(&mut self, item: (&str, &str)) {
-//         todo!()
-//     }
-//     fn extend_reserve(&mut self, additional: usize) {
-//         todo!()
-//     }
-// }
-
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug, thiserror::Error)]
@@ -109,30 +76,6 @@ pub enum Error {
         input: String,
         ty: &'static str,
     },
-}
-
-#[doc(hidden)]
-pub fn transpose_err<T, E, U>(result: Result<Result<T, U>, E>) -> Result<Result<T, E>, U> {
-    match result {
-        Ok(result) => match result {
-            Ok(value) => Ok(Ok(value)),
-            Err(err) => Err(err),
-        },
-        Err(err) => Ok(Err(err)),
-    }
-}
-
-
-// Result<T, Result<T, E>> -> Result<T, E>
-#[doc(hidden)]
-pub fn flatten_err<T, E>(result: Result<T, Result<T, E>>) -> Result<T, E> {
-    match result {
-        Ok(value) => Ok(value),
-        Err(result) => match result {
-            Ok(value) => Ok(value),
-            Err(err) => Err(err),
-        },
-    }
 }
 
 pub trait FromEnv: Sized {
@@ -158,5 +101,28 @@ impl<T, E> Parse for T
             input: value.to_string(),
             ty: std::any::type_name::<Self>(),
         })
+    }
+}
+
+#[doc(hidden)]
+pub fn transpose_err<T, E, U>(result: Result<Result<T, U>, E>) -> Result<Result<T, E>, U> {
+    match result {
+        Ok(result) => match result {
+            Ok(value) => Ok(Ok(value)),
+            Err(err) => Err(err),
+        },
+        Err(err) => Ok(Err(err)),
+    }
+}
+
+// Result<T, Result<T, E>> -> Result<T, E>
+#[doc(hidden)]
+pub fn flatten_err<T, E>(result: Result<T, Result<T, E>>) -> Result<T, E> {
+    match result {
+        Ok(value) => Ok(value),
+        Err(result) => match result {
+            Ok(value) => Ok(value),
+            Err(err) => Err(err),
+        },
     }
 }
