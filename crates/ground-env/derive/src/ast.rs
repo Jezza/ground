@@ -1,6 +1,16 @@
 use darling::util::Override;
 use proc_macro2::Ident;
 
+pub(crate) type EnvData = darling::ast::Data<(), EnvField>;
+
+#[derive(Debug, darling::FromDeriveInput)]
+#[darling(attributes(env), supports(struct_named))]
+pub(crate) struct DeriveInput {
+    pub ident: Ident,
+    pub data: EnvData,
+    pub root: Option<syn::Path>,
+}
+
 #[derive(Clone, Debug, darling::FromField)]
 #[darling(attributes(env))]
 pub(crate) struct EnvField {
@@ -17,14 +27,4 @@ pub(crate) struct EnvField {
     pub flatten: Option<Override<syn::LitStr>>,
 
     pub delimiter: Option<syn::LitStr>,
-}
-
-pub(crate) type EnvData = darling::ast::Data<(), EnvField>;
-
-#[derive(Debug, darling::FromDeriveInput)]
-#[darling(attributes(env), supports(struct_named))]
-pub(crate) struct DeriveInput {
-    pub ident: Ident,
-    pub data: EnvData,
-    pub root: Option<syn::Path>,
 }
