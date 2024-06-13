@@ -1,0 +1,27 @@
+[package]
+name = "ground-migrate"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#commons = { path = "../../libs/commons", features = ["cli-postgres"], version = "0.1.0" }
+#spaces = { path = "../spaces", version = "0.1.0" }
+
+anyhow = { workspace = true }
+#env = { workspace = true }
+regex = { workspace = true }
+sqlx = { workspace = true, features = ["migrate", "postgres"] }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+futures-util = { workspace = true }
+
+serde = { workspace = true }
+
+cargo_toml = { workspace = true }
+topo_sort = { workspace = true }
+
+[lints]
+workspace = true

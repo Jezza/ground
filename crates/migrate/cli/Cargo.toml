@@ -1,0 +1,28 @@
+[package]
+name = "ground-migrate-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#commons = { path = "../../libs/commons", features = ["cli-postgres"], version = "0.1.0" }
+#migrate = { path = "../migrate", version = "0.1.0" }
+#spaces = { path = "../spaces", version = "0.1.0" }
+#tracing = { workspace = true }
+
+#sqlx = { workspace = true, features = ["postgres", "uuid", "runtime-tokio-rustls", "chrono", "migrate"] }
+
+#sha1_smol = { workspace = true }
+#base64 = { workspace = true }
+#cfg-if = { workspace = true }
+#clap = { workspace = true }
+#tokio = { workspace = true, features = ["full"] }
+#anyhow = { workspace = true }
+#tracing-subscriber = { workspace = true, features = ["env-filter"] }
+#serde_json = { workspace = true }
+#promptly = { workspace = true }
+#uuid = { workspace = true }
+#secrecy = { workspace = true }
+
+ground-migrate = { path = "..", version = "0.1.0" }
