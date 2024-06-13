@@ -1,19 +1,13 @@
 //! Common functionality related to CLI tools
 
-#[cfg(all(
-    feature = "cli-postgres",
-    any(
-        feature = "env",
-        feature = "clap",
-    )
-))]
+#[cfg(feature = "cli-postgres")]
 pub mod postgres;
 
-#[cfg(all(
-    feature = "cli-service",
-    any(
-        feature = "env",
-        feature = "clap",
-    )
-))]
+#[cfg(feature = "cli-service")]
 pub mod service;
+
+#[cfg(feature = "cli-tracing")]
+pub mod tracing;
+
+#[cfg(feature = "cli-otel")]
+pub mod otel;
