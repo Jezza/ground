@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/commons",
     "crates/env",
     "crates/env/derive",
     "crates/migrate",
@@ -20,6 +21,9 @@ unwrap_used = "deny"
 syn = "2.0.66"
 quote = "1.0.36"
 proc-macro2 = "1.0.85"
+
+clap = { version = "4.5.4", features = ["env", "derive"] }
+secrecy = { version = "0.8.0" }
 
 tracing = "0.1.40"
 
@@ -44,3 +48,4 @@ ground-env = { path = "./crates/env", version = "0.1.0" }
 ground-env-derive = { path = "./crates/env/derive", version = "0.1.0" }
 ground-migrate = { path = "./crates/migrate", version = "0.1.0" }
 ground-migrate-cli = { path = "./crates/migrate/cli", version = "0.1.0" }
+ground-commons = { path = "./crates/commons", version = "0.1.0" }
