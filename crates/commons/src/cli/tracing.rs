@@ -6,6 +6,7 @@ pub struct TracingArgs {
     #[cfg_attr(feature = "env", env(rename = "HUMAN_READABLE_LOGS", default))]
     #[cfg_attr(feature = "clap", clap(name = "human-readable-logs", env = "HUMAN_READABLE_LOGS", long))]
     pub human_readable_logs: bool,
+
     #[cfg_attr(feature = "clap", clap(
         long,
         env,
