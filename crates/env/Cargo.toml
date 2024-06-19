@@ -1,6 +1,6 @@
 [package]
 name = "ground-env"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Parse env variables by defining a struct"
 license = "MIT"
