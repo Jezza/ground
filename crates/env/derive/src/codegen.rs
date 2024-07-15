@@ -162,7 +162,7 @@ fn expand_mandatory_field(
             #root::transpose_err(#value?.map(#root::Parse::parse))?.unwrap_or_default()
         },
         None => quote::quote_spanned! { span=>
-            #value?.map(Parse::parse).map_err(Error::Missing)??
+            #value?.map(#root::Parse::parse).map_err(#root::Error::Missing)??
         },
     }
 }

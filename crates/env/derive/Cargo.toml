@@ -10,9 +10,9 @@ repository = "https://github.com/Jezza/ground"
 proc-macro = true
 
 [dependencies]
-syn = "2.0.66"
-quote = "1.0.36"
-proc-macro2 = "1.0.85"
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
 
-heck = "0.5.0"
-darling = "0.20.9"
+heck = { workspace = true }
+darling = { workspace = true }
