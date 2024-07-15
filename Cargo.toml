@@ -2,8 +2,9 @@
 resolver = "2"
 members = [
     "crates/commons",
-    "crates/env",
+    "crates/cli",
     "crates/env/derive",
+    "crates/env",
 ]
 
 [workspace.lints.rust]

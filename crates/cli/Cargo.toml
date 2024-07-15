@@ -1,0 +1,53 @@
+[package]
+name = "ground-cli"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["cli-tracing"]
+
+clap = ["dep:clap"]
+env = ["dep:ground-env"]
+
+cli-postgres = [
+    "dep:sqlx",
+    "dep:thiserror",
+    "dep:tracing",
+    "dep:secrecy",
+]
+cli-service = []
+cli-tracing = [
+    "dep:anyhow",
+    "dep:ground-commons",
+    "ground-commons/tracing",
+    "dep:tracing",
+    "dep:tracing-log",
+    "dep:tracing-subscriber",
+]
+cli-otel = [
+    "dep:humantime"
+]
+
+[dependencies]
+clap = { workspace = true, optional = true }
+ground-commons = { workspace = true, optional = true }
+ground-env = { workspace = true, optional = true }
+
+anyhow = { workspace = true, optional = true }
+thiserror = { workspace = true, optional = true }
+secrecy = { workspace = true, optional = true }
+sqlx = { workspace = true, optional = true, features = ["postgres"] }
+
+humantime = { workspace = true, optional = true }
+
+tracing = { workspace = true, optional = true }
+tracing-log = { workspace = true, optional = true }
+tracing-opentelemetry = { workspace = true, optional = true }
+tracing-subscriber = { workspace = true, optional = true, features = ["env-filter", "json", "registry"] }
+
+opentelemetry = { workspace = true, optional = true }
+opentelemetry_sdk = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+
+[lints]
+workspace = true
