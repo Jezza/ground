@@ -5,7 +5,7 @@ fn test_env<T: FromEnv>(env: &[(&'static str, &'static str)]) -> Result<T> {
     for (k, v) in env {
         ctx.env.insert(String::from(*k), Ok((*v).into()));
     }
-    T::from_ctx(&ctx)
+    T::from_ctx(&mut ctx)
 }
 
 #[test]
@@ -145,6 +145,66 @@ fn test_nested_structures() {
     let test = test_env::<Outer>(&[("OUTER_TEXT", "Hello"), ("INNER_TEXT", "World")]).unwrap();
     assert_eq!(test.outer_text, "Hello");
     assert_eq!(test.inner.inner_text, "World");
+}
+
+#[test]
+fn test_nested_nested_structures() {
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Inner {
+        inner_text: String,
+    }
+
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Middle {
+        middle_text: String,
+        #[env(flatten)]
+        inner: Inner,
+    }
+
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Outer {
+        outer_text: String,
+        #[env(flatten)]
+        middle: Middle,
+    }
+
+    let test = test_env::<Outer>(&[("OUTER_TEXT", "Good"), ("MIDDLE_TEXT", "Morning"), ("INNER_TEXT", "World")]).unwrap();
+    assert_eq!(test.outer_text, "Good");
+    assert_eq!(test.middle.middle_text, "Morning");
+    assert_eq!(test.middle.inner.inner_text, "World");
+}
+
+#[test]
+fn test_nested_nested_with_prefix_structures() {
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Inner {
+        text: String,
+    }
+
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Middle {
+        text: String,
+        #[env(flatten = "INNER_")]
+        inner: Inner,
+    }
+
+    #[derive(Debug, FromEnv)]
+    #[env(root = "crate")]
+    struct Outer {
+        outer_text: String,
+        #[env(flatten = "MID_")]
+        middle: Middle,
+    }
+
+    let test = test_env::<Outer>(&[("OUTER_TEXT", "Good"), ("MID_TEXT", "Morning"), ("MID_INNER_TEXT", "World")]).unwrap();
+    assert_eq!(test.outer_text, "Good");
+    assert_eq!(test.middle.text, "Morning");
+    assert_eq!(test.middle.inner.text, "World");
 }
 
 #[test]

@@ -28,9 +28,7 @@ pub fn expand(root: TokenStream, input: ast::DeriveInput) -> TokenStream {
             quote::quote_spanned! { span=>
                 impl #root::FromEnv for #ident {
                     #[allow(unused_variables)]
-                    fn from_ctx(ctx: &#root::Context<'_>) -> #root::Result<Self> {
-                        let prefix = ctx.prefix.get().unwrap_or_default();
-
+                    fn from_ctx(ctx: &mut #root::Context) -> #root::Result<Self> {
                         Ok(Self {
                             #init
                         })
@@ -67,12 +65,12 @@ fn expand_field(
         return match flatten {
             Override::Inherit => {
                 quote::quote_spanned! { span=>
-                    ctx.with_prefix::<_>(None)?
+                    <_ as #root::FromEnv>::from_ctx(ctx)?
                 }
             }
             Override::Explicit(prefix) => {
                 quote::quote_spanned! { span=>
-                    ctx.with_prefix::<_>(Some(#prefix))?
+                    ctx.with_prefix::<_>(#prefix)?
                 }
             }
         };

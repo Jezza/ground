@@ -52,6 +52,6 @@ darling = "0.20.9"
 anyhow = "1.0.86"
 thiserror = "1.0.61"
 
-ground-env = { path = "./crates/env", version = "0.1.0" }
-ground-env-derive = { path = "./crates/env/derive", version = "0.1.0" }
+ground-env = { path = "./crates/env", version = "0.2.0" }
+ground-env-derive = { path = "./crates/env/derive", version = "0.2.0" }
 ground-commons = { path = "./crates/commons", version = "0.1.0" }

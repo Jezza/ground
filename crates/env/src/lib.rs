@@ -4,12 +4,12 @@ use std::borrow::Cow;
 #[cfg(test)]
 mod tests;
 
-pub struct Context<'a> {
-    pub prefix: std::cell::Cell<Option<&'a str>>,
-    pub env: std::collections::HashMap<String, Result<String, std::ffi::OsString>>,
+pub struct Context {
+    prefix: Vec<&'static str>,
+    env: std::collections::HashMap<String, Result<String, std::ffi::OsString>>,
 }
 
-impl<'prefix> Context<'prefix> {
+impl Context {
     pub fn env() -> Self {
         let env = std::env::vars_os()
             .filter_map(|(key, value)| {
@@ -22,34 +22,48 @@ impl<'prefix> Context<'prefix> {
             .collect::<std::collections::HashMap<_, _>>();
 
         Self {
-            prefix: std::cell::Cell::new(None),
+            prefix: vec![],
             env,
         }
     }
 
     pub fn empty() -> Self {
         Self {
-            prefix: std::cell::Cell::new(None),
+            prefix: vec![],
             env: Default::default(),
         }
     }
 
     #[doc(hidden)]
-    pub fn with_prefix<'a: 'prefix, T: FromEnv>(&self, prefix: Option<&'a str>) -> Result<T> {
-        let old_prefix = self.prefix.replace(prefix);
+    pub fn with_prefix<T: FromEnv>(&mut self, prefix: &'static str) -> Result<T> {
+        self.prefix.push(prefix);
+
         let out = T::from_ctx(self);
-        self.prefix.replace(old_prefix);
+
+        let old = self.prefix.pop();
+
+        assert!(old.is_some(), "Any operation on the prefix should be self-contained. [Something being flattened removed an extra segment]");
+
         out
     }
 
     #[doc(hidden)]
     pub fn resolve(&self, key: &'static str) -> Result<Result<&str, String>> {
-        let key_alloc;
-        let key = if let Some(prefix) = self.prefix.get() {
-            key_alloc = format!("{}{}", prefix, key);
-            Cow::Owned(key_alloc)
-        } else {
+        let mut key_alloc;
+
+        let key = if self.prefix.is_empty() {
             Cow::Borrowed(key)
+        } else {
+            let len = self.prefix.iter()
+                .map(|item| item.len())
+                .sum::<usize>()
+                + key.len();
+            key_alloc = String::with_capacity(len);
+            for prefix in self.prefix.iter() {
+                key_alloc.push_str(prefix);
+            }
+            key_alloc.push_str(key);
+            Cow::Owned(key_alloc)
         };
 
         match self.env.get(key.as_ref()) {
@@ -80,10 +94,10 @@ pub enum Error {
 
 pub trait FromEnv: Sized {
     fn from_env() -> Result<Self> {
-        Self::from_ctx(&Context::env())
+        Self::from_ctx(&mut Context::env())
     }
 
-    fn from_ctx(ctx: &Context<'_>) -> Result<Self>;
+    fn from_ctx(ctx: &mut Context) -> Result<Self>;
 }
 
 pub trait Parse: Sized {
@@ -92,7 +106,7 @@ pub trait Parse: Sized {
 
 impl<T, E> Parse for T
     where
-        T: std::str::FromStr<Err=E>,
+        T: std::str::FromStr<Err = E>,
         E: std::error::Error,
 {
     fn parse(value: &str) -> Result<Self> {
