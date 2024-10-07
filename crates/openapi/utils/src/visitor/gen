@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! [ -x "$(command -v sd)" ]; then
+  # shellcheck disable=SC2016
+  echo 'Error: sd is not installed. [Just run `cargo install sd`]' >&2
+  exit 1
+fi
+
+cp ./visit_mut.rs ./visit.rs
+sd -F 'VisitMut' 'Visit' ./visit.rs
+sd -F '<_ as AsMut<_>>::as_mut' '*' ./visit.rs
+sd -F '.as_mut()' '' ./visit.rs
+sd -F '_mut' '' ./visit.rs
+sd -F "&'openapi mut " '' ./visit.rs
+sd -F "<'openapi>" '' ./visit.rs
+sd -F "'openapi, " '' ./visit.rs
+
+cp ./visit_mut.rs ./visit_ref.rs
+sd -F 'VisitMut' 'VisitRef' ./visit_ref.rs
+sd -F '<_ as AsMut<_>>::as_mut' '<_ as AsRef<_>>::as_ref' ./visit_ref.rs
+sd -F '_mut' '_ref' ./visit_ref.rs
+sd -F "&'openapi mut" "&'openapi" ./visit_ref.rs
+
+cp ./type_visit_mut.rs ./type_visit.rs
+sd -F 'TypeVisitMut' 'TypeVisit' ./type_visit.rs
+sd -F '<_ as AsMut<_>>::as_mut' '*' ./type_visit.rs
+sd -F '.as_mut()' '' ./type_visit.rs
+sd -F '_mut' '' ./type_visit.rs
+sd -F "&'openapi mut " '' ./type_visit.rs
+sd -F "<'openapi>" '' ./type_visit.rs
+sd -F "'openapi, " '' ./type_visit.rs
+
+cp ./type_visit_mut.rs ./type_visit_ref.rs
+sd -F 'TypeVisitMut' 'TypeVisitRef' ./type_visit_ref.rs
+sd -F '<_ as AsMut<_>>::as_mut' '<_ as AsRef<_>>::as_ref' ./type_visit_ref.rs
+sd -F '_mut' '_ref' ./type_visit_ref.rs
+sd -F "&'openapi mut" "&'openapi" ./type_visit_ref.rs

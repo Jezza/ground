@@ -1,70 +1,90 @@
-
 /// grpc_server_max_recv_msg_size: 4194304 (4MB) -- Max gRPC message size that can be received
 /// grpc_server_max_send_msg_size: 4194304 (4MB) -- Max gRPC message size that can be sent
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "env", derive(ground_env::FromEnv))]
 #[cfg_attr(feature = "clap", derive(clap::Parser))]
 pub struct OpentelemetryArgs {
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value = "http://127.0.0.1:4317",
-        help = "Otel: Endpoint"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value = "http://127.0.0.1:4317",
+            help = "Otel: Endpoint"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "http://127.0.0.1:4317"))]
     pub otel_endpoint: String,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value = "3s",
-        help = "Otel: timeout for the exporter (using humantime::Duration)"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value = "3s",
+            help = "Otel: timeout for the exporter (using humantime::Duration)"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "3s"))]
     pub otel_timeout: humantime::Duration,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value_t = 128,
-        help = "Otel: Maximum number of events per span"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value_t = 128,
+            help = "Otel: Maximum number of events per span"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "128"))]
     pub otel_max_events_per_span: u32,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value_t = 128,
-        help = "Otel: Maximum number of attributes per span"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value_t = 128,
+            help = "Otel: Maximum number of attributes per span"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "128"))]
     pub otel_max_attributes_per_span: u32,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value_t = 128,
-        help = "Otel: Maximum number of attributes per event"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value_t = 128,
+            help = "Otel: Maximum number of attributes per event"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "128"))]
     pub otel_max_attributes_per_event: u32,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value_t = 128,
-        help = "Otel: Maximum links per span"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value_t = 128,
+            help = "Otel: Maximum links per span"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "128"))]
     pub otel_max_links_per_span: u32,
 
-    #[cfg_attr(feature = "clap", clap(
-        long,
-        env,
-        default_value_t = 128,
-        help = "Otel: Maximum number of attributes per link"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            long,
+            env,
+            default_value_t = 128,
+            help = "Otel: Maximum number of attributes per link"
+        )
+    )]
     #[cfg_attr(feature = "env", env(default = "128"))]
     pub otel_max_attributes_per_link: u32,
 }
@@ -85,7 +105,10 @@ impl Default for OpentelemetryArgs {
 }
 
 impl OpentelemetryArgs {
-    pub fn to_tracer(&self, service_name: impl Into<String>) -> Result<Option<opentelemetry_sdk::trace::Tracer>, opentelemetry::trace::TraceError> {
+    pub fn to_tracer(
+        &self,
+        service_name: impl Into<String>,
+    ) -> Result<Option<opentelemetry_sdk::trace::Tracer>, opentelemetry::trace::TraceError> {
         if self.otel_endpoint.is_empty() {
             return Ok(None);
         }

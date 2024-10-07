@@ -112,13 +112,7 @@ fn expand_field(
                         compile_error!("Vec<Vec<_>> is not supported")
                     }
                 } else {
-                    expand_vec_field(
-                        root,
-                        span,
-                        value,
-                        field.default,
-                        field.delimiter,
-                    )
+                    expand_vec_field(root, span, value, field.default, field.delimiter)
                 }
             }
             None => expand_mandatory_field(root, span, value, field.default),

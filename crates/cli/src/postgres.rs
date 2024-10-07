@@ -54,7 +54,10 @@ Each of the URI parts is optional.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "clap", derive(clap::Parser))]
 #[cfg_attr(feature = "env", derive(ground_env::FromEnv))]
-#[cfg_attr(feature = "env", clap(next_help_heading = "POSTGRES", term_width = 200))]
+#[cfg_attr(
+    feature = "env",
+    clap(next_help_heading = "POSTGRES", term_width = 200)
+)]
 pub struct PostgresArgs {
     /// The general form for a connection URI is:
     ///
@@ -100,63 +103,87 @@ pub struct PostgresArgs {
     /// If a host name begins with a slash, it specifies Unix-domain communication
     /// rather than TCP/IP communication; the value is the name of the directory
     /// in which the socket file is stored.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-host",
-        env = "POSTGRES_HOST",
-        default_value = "localhost",
-        long,
-        conflicts_with = "postgres-uri"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-host",
+            env = "POSTGRES_HOST",
+            default_value = "localhost",
+            long,
+            conflicts_with = "postgres-uri"
+        )
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_HOST"))]
     pub host: String,
 
     /// Sets the username to connect as.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-user",
-        env = "POSTGRES_USER",
-        default_value = "postgres",
-        long,
-        conflicts_with = "postgres-uri"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-user",
+            env = "POSTGRES_USER",
+            default_value = "postgres",
+            long,
+            conflicts_with = "postgres-uri"
+        )
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_USER", default = "postgres"))]
     pub user: String,
 
     /// Sets the password to use if the server demands password authentication.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-password",
-        env = "POSTGRES_PASSWORD",
-        default_value = "password",
-        long,
-        conflicts_with = "postgres-uri"
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_PASSWORD", default = "password"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-password",
+            env = "POSTGRES_PASSWORD",
+            default_value = "password",
+            long,
+            conflicts_with = "postgres-uri"
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_PASSWORD", default = "password")
+    )]
     pub password: SecretString,
 
     /// Sets the port to connect to at the server host.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-port",
-        env = "POSTGRES_PORT",
-        default_value = "5432",
-        long,
-        conflicts_with = "postgres-uri"
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-port",
+            env = "POSTGRES_PORT",
+            default_value = "5432",
+            long,
+            conflicts_with = "postgres-uri"
+        )
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_PORT", default = "5432"))]
     pub port: u16,
 
     /// Sets the database name
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-database",
-        env = "POSTGRES_DATABASE",
-        default_value = "postgres",
-        long,
-        conflicts_with = "postgres-uri"
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_DATABASE", default = "postgres"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-database",
+            env = "POSTGRES_DATABASE",
+            default_value = "postgres",
+            long,
+            conflicts_with = "postgres-uri"
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_DATABASE", default = "postgres")
+    )]
     pub database: String,
 
     /// Sets the schema name. In postgres terms, this is the search path.
     /// Does not conflict with postgres-uri.
-    #[cfg_attr(feature = "clap", clap(name = "postgres-schema", env = "POSTGRES_SCHEMA", long))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(name = "postgres-schema", env = "POSTGRES_SCHEMA", long)
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_SCHEMA"))]
     pub schema: Option<String>,
 
@@ -167,15 +194,18 @@ pub struct PostgresArgs {
     /// first attempt an SSL connection but fallback to a non-SSL connection on failure.
     ///
     /// Ignored for Unix domain socket communication.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-ssl-mode",
-        env = "POSTGRES_SSL_MODE",
-        default_value = "prefer",
-        long,
-        display_order = 2000,
-        conflicts_with = "postgres-uri",
-        value_enum
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-ssl-mode",
+            env = "POSTGRES_SSL_MODE",
+            default_value = "prefer",
+            long,
+            display_order = 2000,
+            conflicts_with = "postgres-uri",
+            value_enum
+        )
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_SSL_MODE", default = "prefer"))]
     pub ssl_mode: PgSslMode,
 
@@ -196,23 +226,32 @@ pub struct PostgresArgs {
     /// Enables logging of statements.
     ///
     /// Can be useful for debugging queries.
-    #[cfg_attr(feature = "clap", clap(
-        name = "postgres-enable-statement-logging",
-        env = "POSTGRES_ENABLE_STATEMENT_LOGGING",
-        display_order = 2002,
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_ENABLE_STATEMENT_LOGGING", default))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "postgres-enable-statement-logging",
+            env = "POSTGRES_ENABLE_STATEMENT_LOGGING",
+            display_order = 2002,
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_ENABLE_STATEMENT_LOGGING", default)
+    )]
     pub enable_statement_logging: bool,
 
     /// If true, the health of a connection will be verified by a call to Connection::ping
     /// before returning the connection.
-    #[cfg_attr(feature = "clap", clap(
-        name = "test-before-acquire",
-        env = "POSTGRES_TEST_BEFORE_ACQUIRE",
-        default_value = "false",
-        long
-    ))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "test-before-acquire",
+            env = "POSTGRES_TEST_BEFORE_ACQUIRE",
+            default_value = "false",
+            long
+        )
+    )]
     #[cfg_attr(feature = "env", env(rename = "POSTGRES_TEST_BEFORE_ACQUIRE", default))]
     pub test_before_acquire: bool,
 
@@ -221,13 +260,19 @@ pub struct PostgresArgs {
     /// Be mindful of the connection limits for your database as well as other applications
     /// which may want to connect to the same database (or even multiple instances of the
     /// same application in high-availability deployments).
-    #[cfg_attr(feature = "clap", clap(
-        name = "max-connections",
-        env = "POSTGRES_MAX_CONNECTIONS",
-        default_value = "10",
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_MAX_CONNECTIONS", default = "10"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "max-connections",
+            env = "POSTGRES_MAX_CONNECTIONS",
+            default_value = "10",
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_MAX_CONNECTIONS", default = "10")
+    )]
     pub max_connections: u32,
 
     /// Set the maximum amount of time to spend waiting for a connection in Pool::acquire().
@@ -242,13 +287,19 @@ pub struct PostgresArgs {
     /// - If a new connection needs to be opened, that will obviously require I/O, handshaking,
     ///   and initialization commands.
     ///   - If after_connect is set, that will also be executed.
-    #[cfg_attr(feature = "clap", clap(
-        name = "acquire-timeout-seconds",
-        env = "POSTGRES_ACQURIE_TIMEOUT_SECONDS",
-        default_value = "30",
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_ACQURIE_TIMEOUT_SECONDS", default = "30"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "acquire-timeout-seconds",
+            env = "POSTGRES_ACQURIE_TIMEOUT_SECONDS",
+            default_value = "30",
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_ACQURIE_TIMEOUT_SECONDS", default = "30")
+    )]
     pub acquire_timeout: u64,
 
     /// Set the minimum number of connections to maintain at all times.
@@ -267,13 +318,19 @@ pub struct PostgresArgs {
     /// break anything internally if the condition doesn’t hold, and if the application allows
     /// either value to be dynamically set then it should be checking this condition itself and
     /// returning a nicer error than a panic anyway.
-    #[cfg_attr(feature = "clap", clap(
-        name = "min-connections",
-        env = "POSTGRES_MIN_CONNECTIONS",
-        default_value_t = 1,
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_MIN_CONNECTIONS", default = "1"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "min-connections",
+            env = "POSTGRES_MIN_CONNECTIONS",
+            default_value_t = 1,
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_MIN_CONNECTIONS", default = "1")
+    )]
     pub min_connections: u32,
 
     /// Set the maximum lifetime of individual connections.
@@ -286,13 +343,19 @@ pub struct PostgresArgs {
     /// on the database-side. It is better to retire connections periodically (even if only once daily)
     /// to allow the database the opportunity to clean up data structures (parse trees, query metadata
     /// caches, thread-local storage, etc.) that are associated with a session.
-    #[cfg_attr(feature = "clap", clap(
-        name = "max-lifetime-seconds",
-        env = "POSTGRES_MAX_LIFETIME_SECONDS",
-        default_value = "1800",
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_MAX_LIFETIME_SECONDS", default = "1800"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "max-lifetime-seconds",
+            env = "POSTGRES_MAX_LIFETIME_SECONDS",
+            default_value = "1800",
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_MAX_LIFETIME_SECONDS", default = "1800")
+    )]
     pub max_lifetime: u64,
 
     /// Set a maximum idle duration for individual connections.
@@ -300,13 +363,19 @@ pub struct PostgresArgs {
     /// Any connection that remains in the idle queue longer than this will be closed.
     ///
     /// For usage-based database server billing, this can be a cost saver.
-    #[cfg_attr(feature = "clap", clap(
-        name = "idle-timeout-seconds",
-        env = "POSTGRES_IDLE_TIMEOUT_SECONDS",
-        default_value = "600",
-        long
-    ))]
-    #[cfg_attr(feature = "env", env(rename = "POSTGRES_IDLE_TIMEOUT_SECONDS", default = "600"))]
+    #[cfg_attr(
+        feature = "clap",
+        clap(
+            name = "idle-timeout-seconds",
+            env = "POSTGRES_IDLE_TIMEOUT_SECONDS",
+            default_value = "600",
+            long
+        )
+    )]
+    #[cfg_attr(
+        feature = "env",
+        env(rename = "POSTGRES_IDLE_TIMEOUT_SECONDS", default = "600")
+    )]
     pub idle_timeout: u64,
 }
 

@@ -24,13 +24,13 @@ fn test_simple() {
         ("OPTIONAL_TEXT_PRESENT", "World"),
         ("NUMBER", "-42"),
     ])
-        .unwrap();
+    .unwrap();
     assert_eq!(test.text, "Hello");
     assert!(test.optional_text_missing.is_none());
     assert_eq!(test.optional_text_present.as_deref(), Some("World"));
     assert_eq!(test.number, -42);
 
-    assert!(test_env::<Test>(&[("TEXT", "Hello"), ("OPTIONAL_TEXT_PRESENT", "World"), ]).is_err());
+    assert!(test_env::<Test>(&[("TEXT", "Hello"), ("OPTIONAL_TEXT_PRESENT", "World"),]).is_err());
 }
 
 #[test]
@@ -171,7 +171,12 @@ fn test_nested_nested_structures() {
         middle: Middle,
     }
 
-    let test = test_env::<Outer>(&[("OUTER_TEXT", "Good"), ("MIDDLE_TEXT", "Morning"), ("INNER_TEXT", "World")]).unwrap();
+    let test = test_env::<Outer>(&[
+        ("OUTER_TEXT", "Good"),
+        ("MIDDLE_TEXT", "Morning"),
+        ("INNER_TEXT", "World"),
+    ])
+    .unwrap();
     assert_eq!(test.outer_text, "Good");
     assert_eq!(test.middle.middle_text, "Morning");
     assert_eq!(test.middle.inner.inner_text, "World");
@@ -201,7 +206,12 @@ fn test_nested_nested_with_prefix_structures() {
         middle: Middle,
     }
 
-    let test = test_env::<Outer>(&[("OUTER_TEXT", "Good"), ("MID_TEXT", "Morning"), ("MID_INNER_TEXT", "World")]).unwrap();
+    let test = test_env::<Outer>(&[
+        ("OUTER_TEXT", "Good"),
+        ("MID_TEXT", "Morning"),
+        ("MID_INNER_TEXT", "World"),
+    ])
+    .unwrap();
     assert_eq!(test.outer_text, "Good");
     assert_eq!(test.middle.text, "Morning");
     assert_eq!(test.middle.inner.text, "World");

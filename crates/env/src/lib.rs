@@ -54,10 +54,7 @@ impl Context {
         let key = if self.prefix.is_empty() {
             Cow::Borrowed(key)
         } else {
-            let len = self.prefix.iter()
-                .map(|item| item.len())
-                .sum::<usize>()
-                + key.len();
+            let len = self.prefix.iter().map(|item| item.len()).sum::<usize>() + key.len();
             key_alloc = String::with_capacity(len);
             for prefix in self.prefix.iter() {
                 key_alloc.push_str(prefix);
@@ -105,9 +102,9 @@ pub trait Parse: Sized {
 }
 
 impl<T, E> Parse for T
-    where
-        T: std::str::FromStr<Err = E>,
-        E: std::error::Error,
+where
+    T: std::str::FromStr<Err = E>,
+    E: std::error::Error,
 {
     fn parse(value: &str) -> Result<Self> {
         std::str::FromStr::from_str(value).map_err(|err: E| Error::Parse {

@@ -1,0 +1,26 @@
+[package]
+name = "ground-codegen-utils"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+case = ["dep:heck"]
+module = ["dep:syn", "dep:anyhow", "dep:proc-macro2", "dep:quote"]
+pretty = ["dep:prettyplease"]
+
+[dependencies]
+#serde = { workspace = true, features = ["derive"], optional = true }
+serde_json = { workspace = true, optional = true }
+
+anyhow = { workspace = true, optional = true }
+
+heck = { workspace = true, optional = true }
+quote = { workspace = true, optional = true }
+proc-macro2 = { workspace = true, optional = true }
+
+syn = { workspace = true, optional = true }
+
+prettyplease = { workspace = true, optional = true }
+
+[lints]
+workspace = true

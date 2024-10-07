@@ -6,7 +6,10 @@
 #[derive(Debug)]
 #[cfg_attr(feature = "env", derive(ground_env::FromEnv))]
 #[cfg_attr(feature = "clap", derive(clap::Parser))]
-#[cfg_attr(feature = "clap", clap(next_help_heading = "SERVICE", term_width = 200))]
+#[cfg_attr(
+    feature = "clap",
+    clap(next_help_heading = "SERVICE", term_width = 200)
+)]
 pub struct ServiceArgs {
     /// The port the service is listening on
     #[cfg_attr(feature = "env", env(rename = "PORT"))]

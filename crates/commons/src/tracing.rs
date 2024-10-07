@@ -12,11 +12,7 @@ pub fn make_stdout_subscriber(
     default_env_filter: impl Into<String>,
     json: bool,
 ) -> anyhow::Result<impl Subscriber + Sync + Send> {
-    make_subscriber(
-        default_env_filter,
-        json,
-        std::io::stdout,
-    )
+    make_subscriber(default_env_filter, json, std::io::stdout)
 }
 
 /// Set up a subscriber writing to `Sink`.
@@ -28,8 +24,8 @@ pub fn make_subscriber<Sink>(
     emit_json: bool,
     sink: Sink,
 ) -> anyhow::Result<impl Subscriber + Sync + Send>
-    where
-        Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static + Clone,
+where
+    Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static + Clone,
 {
     let default_env_filter = default_env_filter.into();
     let env_filter =
@@ -62,4 +58,3 @@ pub fn set_global_default(subscriber: impl Subscriber + Sync + Send) -> anyhow::
     tracing::subscriber::set_global_default(subscriber)?;
     Ok(())
 }
-

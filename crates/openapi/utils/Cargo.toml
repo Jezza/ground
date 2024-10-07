@@ -1,0 +1,13 @@
+[package]
+name = "ground-openapi-utils"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+#visitor = ["dep:openapiv3", "dep:indexmap", "dep:serde_json"]
+
+[dependencies]
+serde_json = { workspace = true } # , optional = true
+
+indexmap = { workspace = true } # , optional = true
+openapiv3 = { workspace = true } # , optional = true

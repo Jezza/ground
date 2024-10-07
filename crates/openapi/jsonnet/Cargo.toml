@@ -1,0 +1,22 @@
+[package]
+name = "ground-openapi-jsonnet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+anyhow = { workspace = true }
+openapiv3 = { workspace = true }
+indexmap = { workspace = true }
+rust-embed = { workspace = true, features = ["include-exclude"] }
+
+ground-openapi-utils = { workspace = true }
+ground-codegen-utils = { workspace = true, features = ["case"] }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+jrsonnet-parser = { workspace = true }
+jrsonnet-evaluator = { workspace = true, features = ["exp-preserve-order"] }
+jrsonnet-stdlib = { workspace = true, features = ["exp-preserve-order"] }
+jrsonnet-gcmodule = { workspace = true, features = ["derive"] }

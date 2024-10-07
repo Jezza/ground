@@ -1,6 +1,6 @@
 mod ast;
-mod utils;
 mod codegen;
+mod utils;
 
 #[proc_macro_derive(FromEnv, attributes(env))]
 pub fn env_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
